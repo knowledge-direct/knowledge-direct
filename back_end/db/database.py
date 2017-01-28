@@ -57,25 +57,40 @@ class Database:
         return citation_graph
 
 
-    def list_papers(self):
-        self.curs.execute("""
-            SELECT * FROM papers;
-            """)
+    def list_papers(self, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM papers;
+                """)
+        else:
+            self.curs.execute("""
+                SELECT * FROM papers LIMIT ?, ?;
+                """, (page_size*page, page_size))
         results = self.curs.fetchall()
         return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
 
 
+    def list_papers_read(self, user, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0;
+                """, (user,))
+        else:
+            self.curs.execute("""
+                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0 LIMIT ?, ?;
+                """, (user, page_size*page, page_size))
 
-    def list_papers_read(self, user):
-        self.curs.execute("""
-            SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0
-            """, (user,))
         results = self.curs.fetchall()
         return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
 
-    def list_papers_unread(self, user):
-        self.curs.execute("""
-            SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)
-            """, (user,))
+    def list_papers_unread(self, user, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0);
+                """, (user,))
+        else:
+            self.curs.execute("""
+                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0) LIMIT ?, ?;
+                """, (user, page_size*page, page_size))
         results = self.curs.fetchall()
         return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
