@@ -35,3 +35,15 @@ class Database:
             VALUES (?, ?, ?);
         """, (citing, cited, value))
         self.conn.commit()
+
+
+    def get_citation_network(self):
+        self.curs.execute("""
+            SELECT (citing, cited) FROM connections;
+            """)
+        results = self.curs.fetchall()
+        citation_graph = nx.Graph()
+        for p1, p2 in results:
+            citation_graph.add_nodes_from([p1, p2])  # nodes are a set, duplicates are dealt with
+            citation_graph.add_edge(p1, p2, is_cited=1)
+        return citation_graph

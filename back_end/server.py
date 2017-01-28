@@ -47,9 +47,27 @@ def get_user_name(user_id):
     else:
         return row[0]
 
+
+def user_logged_in(session):
+    user_name = None
+    if 'user_id' in flask.session:
+        user_name = get_user_name(flask.session['user_id'])
+    if user_name == '' or user_name == None:
+        return False
+    return True
+
+
 @app.route('/')
 def index():
-    return flask.render_template('main.html')
+    user_name = None
+    if 'user_id' in flask.session:
+        user_name = get_user_name(flask.session['user_id'])
+    if user_name == '':
+        user_name = None
+    if user_logged_in(flask.session):
+        return flask.render_template('logged_in.html', user_name=user_name)
+    else:
+        return flask.render_template('main.html', user_name=user_name)
 
 
 @app.route('/logged_in')
