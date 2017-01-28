@@ -7,10 +7,17 @@
     <header>
       <div class="header-left"><h1>Knowledge Direct</h1></div>
       <div class="header-right">
-        <a href="/oauth2callback" class="logged-out hide">Sign in with Google</a>
-        <span class="logged-in hide">Logged in as <span class="user-name"></span> - <a href="/logout">Log out</a></span>
+        {% if user_name == None %}
+        <a href="/oauth2callback" class="logged-out">Sign in with Google</a>
+        {% else %}
+        <span class="logged-in">Logged in as <span class="user-name">{{ user_name }}</span> - <a href="/logout">Log out</a></span>
+        {% endif %}
       </div>
     </header>
+
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
 
     <script src="/static/js/jquery-1.12.0.min.js"></script>
     <script src="/static/js/main.js"></script>
