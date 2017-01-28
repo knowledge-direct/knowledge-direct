@@ -1,4 +1,36 @@
 {% extends "main.html" %}
 {% block content %}
-  <h3>Testing</h3>
+<form action="/search" method="post">
+  <table>
+    <tr>
+      <td class="scroll">
+        <section class="base">
+          <h3>Select Base Papers:</h3>
+          <ul class="paper-list">
+            {% for paper in papers %}
+              <li><label><table><tr><td><input type="checkbox" name="{{ paper['paper_id'] }}"/></td><td><b>{{ paper['title'] }}</b><br>{{ paper['author'] }} ({{ paper['date'] }})</td></tr></table></label></li>
+            {% endfor %}
+          </ul>
+        </section>
+        <section class="target">
+          <h3>Select Target Papers:</h3>
+          <ul class="target-list">
+            {% for paper in papers %}
+              <li><label><table><tr><td><input type="radio" name="target" value="{{ paper['paper_id'] }}"/></td><td><b>{{ paper['title'] }}</b><br>{{ paper['author'] }} ({{ paper['date'] }})</td></tr></table></label></li>
+            {% endfor %}
+          </ul>
+        </section>
+      </td>
+      <td class="submit-area">
+        <section class="base-button">
+          <button class="next">Next</button>
+        </section>
+        <section class="target-button">
+          <button class="back">Back</button>
+          <input type="submit" value="Search"/>
+        </section>
+      </td>
+    </tr>
+  </table>
+</form>
 {% endblock %}

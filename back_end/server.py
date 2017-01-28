@@ -5,10 +5,14 @@ import os
 import json
 import sqlite3
 import requests
+from db import database
 
 app = flask.Flask(__name__, static_url_path='/static')
 
 conn = sqlite3.connect('db/database.db')
+
+d = database.Database('db/database.db')
+
 
 # Method for checking if a user exists, if not then creating a new record
 # followed by returning the user's ID
@@ -65,9 +69,23 @@ def index():
     if user_name == '':
         user_name = None
     if user_logged_in(flask.session):
-        return flask.render_template('logged_in.html', user_name=user_name)
+        papers = d.list_papers()
+        return flask.render_template('logged_in.html', user_name=user_name, papers=papers)
     else:
         return flask.render_template('main.html', user_name=user_name)
+
+@app.route('/search', methods=['POST'])
+def search():
+    target = None
+    start_papers = []
+    for item in flask.request.form.items():
+        if item[0] == 'target':
+            target = item[1]
+        else:
+            if item[1] == 'on':
+                start_papers += [item[0]]
+    search_data = { 'target': target, 'start_papers': start_papers }
+    return flask.jsonify(search_data)
 
 
 @app.route('/logged_in')
