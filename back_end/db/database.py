@@ -25,18 +25,24 @@ class Database:
             """, (key, title, author, date, keywords))
         else:
             self.curs.execute("""
-                INSERT INTO papers(id, title, author, date
+                INSERT INTO papers(id, title, author, date)
                 VALUES (?, ?, ?, ?);
             """, (title, author, date))
         self.conn.commit()
 
-    def add_connection(self, citing, cited, value=1):
+    def add_connection(self, citing, cited):
         self.curs.execute("""
-            INSERT INTO connections(citing, cited, value)
+            INSERT INTO connections(paper_one, paper_two, citing)
             VALUES (?, ?, ?);
-        """, (citing, cited, value))
+        """, (citing, cited, True))
         self.conn.commit()
 
+    def update_connection(self, citing, cited, **kwargs):
+        for key in kwargs:
+            self.curs.execute("""
+                UPDATE connections SET {}=? WHERE paper_one=? and paper_two=?;
+            """.format(key), (kwargs[key], citing, cited))
+        self.conn.commit()
 
     def get_citation_network(self):
         citation_graph = nx.Graph()
@@ -48,7 +54,7 @@ class Database:
             citation_graph.add_node(id, title=title, author=author, date=date, key_words=key_words)
 
         self.curs.execute("""
-            SELECT citing, cited FROM connections;
+            SELECT paper_one, paper_two FROM connections WHERE citing=0;
             """)
         results = self.curs.fetchall()
         for p1, p2 in results:
@@ -57,40 +63,30 @@ class Database:
         return citation_graph
 
 
-    def list_papers(self, page_size=None, page=0):
-        if page_size is None:
-            self.curs.execute("""
-                SELECT * FROM papers;
-                """)
-        else:
-            self.curs.execute("""
-                SELECT * FROM papers LIMIT ?, ?;
-                """, (page_size*page, page_size))
+    def list_papers(self, query='', user=None, page_size=None, page=0):
+        args = []
+        limit = ''
+        if user is not None:
+            args.append(user)
+        if page_size is not None:
+            args.append(page_size*page)
+            args.append(page)
+            limit = 'LIMIT ?, ?'
+        self.curs.execute("""
+            SELECT * FROM papers {} {};
+            """.format(query, limit), args)
         results = self.curs.fetchall()
         return [{'paper_id': res[0], 'title': res[1], 'author': res[2], 'date': res[3], 'key_words': res[4]} for res in results]
 
 
     def list_papers_read(self, user, page_size=None, page=0):
-        if page_size is None:
-            self.curs.execute("""
-                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0;
-                """, (user,))
-        else:
-            self.curs.execute("""
-                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0 LIMIT ?, ?;
-                """, (user, page_size*page, page_size))
-
-        results = self.curs.fetchall()
-        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+        return list_papers(self, query="""AS p WHERE p.id IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
+                             user=user, page_size=page_size, page=page)
 
     def list_papers_unread(self, user, page_size=None, page=0):
-        if page_size is None:
-            self.curs.execute("""
-                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0);
-                """, (user,))
-        else:
-            self.curs.execute("""
-                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0) LIMIT ?, ?;
-                """, (user, page_size*page, page_size))
-        results = self.curs.fetchall()
-        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+        return list_papers(self, query="""AS p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
+                             user=user, page_size=page_size, page=page)
+
+
+if __name__ == '__main__':
+    db = Database()

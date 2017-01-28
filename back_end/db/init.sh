@@ -26,14 +26,19 @@ sqlite3 $DB '
     title TEXT NOT NULL,
     author TEXT NOT NULL,
     date TEXT NOT NULL,
-    key_words TEXT
+    key_words TEXT,
+    quality INT
     )' || true
 sqlite3 $DB '
     CREATE TABLE connections(
-    citing TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    cited TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    value INT NOT NULL,
-    PRIMARY KEY (citing, cited)
+    paper_one TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    paper_two TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    citing BOOL NOT NULL,
+    first_deg BOOL,
+    num_second_deg INT,
+    key_word_score INT,
+    quality,
+    PRIMARY KEY (paper_one, paper_two)
     )' || true
 sqlite3 $DB '
     CREATE TABLE familiarities(
