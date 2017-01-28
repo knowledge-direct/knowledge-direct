@@ -52,5 +52,6 @@ class Database:
             """)
         results = self.curs.fetchall()
         for p1, p2 in results:
-            citation_graph.add_edge(p1, p2)
+            if citation_graph.has_node(p1) and citation_graph.has_node(p2):
+                citation_graph.add_edge(p1, p2)
         return citation_graph
