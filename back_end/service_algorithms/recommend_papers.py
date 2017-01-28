@@ -7,6 +7,8 @@ def get_papers(G, source_paper, target_paper, max_step_size):
     papers_in_path.append(source_paper)
     differences=[]
     cum_weights = 0
+
+    # This takes the biggest step below the max_step_size
     for i in range(1,len(whole_path)):
         node1 = whole_path[i-1]
         node2 = whole_path[i]

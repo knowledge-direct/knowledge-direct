@@ -8,7 +8,7 @@ displayed. You may need to delete the database, or check whether it contains
 the same information as specified in this script."
 read -p "Press enter to continue"
 
-DB="db/database.db"
+DB="./database.db"
 
 # Create the database directory
 mkdir -p db

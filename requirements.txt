@@ -4,3 +4,7 @@ httplib2
 oauth2client
 google-api-python-client
 requests
+networkx
+## BeuatifulSoup4
+bs4
+json
