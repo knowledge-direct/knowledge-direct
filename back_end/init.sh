@@ -22,18 +22,18 @@ sqlite3 $DB '
     )' || true
 sqlite3 $DB '
     CREATE TABLE papers(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     author TEXT NOT NULL,
-    abstract TEXT NOT NULL,
+    date TEXT NOT NULL,
     key_words TEXT
     )' || true
 sqlite3 $DB '
     CREATE TABLE connections(
-    paper_one NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    paper_two NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    citing TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    cited TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     value INT NOT NULL,
-    PRIMARY KEY (paper_one, paper_two)
+    PRIMARY KEY (citing, cited)
     )' || true
 sqlite3 $DB '
     CREATE TABLE familiarities(
