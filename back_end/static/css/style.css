@@ -107,3 +107,27 @@ section.target-button, section.base-button {
   top: 40px;
   right: 10px;
 }
+
+.read .unchecked {
+  display: none;
+}
+
+.unread .checked {
+  display: none;
+}
+
+.toggle-read {
+  cursor: pointer;
+}
+
+.read .find-shortest-path {
+  display: none;
+}
+
+.find-shortest-path {
+  cursor: pointer;
+}
+
+.unread, .read {
+  width: 60px;
+}
