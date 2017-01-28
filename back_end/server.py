@@ -10,31 +10,39 @@ app = flask.Flask(__name__)
 
 conn = sqlite3.connect('db/database.db')
 
+# Method for checking if a user exists, if not then creating a new record
+# followed by returning the user's ID
+# TODO: move this into a database/user class
 def create_or_update_user(google_id, google_token):
-    # Do this instead
+    # Get a new cursor, and select the first row from the query
     c = conn.cursor()
-    print(google_token)
     t = (str(google_id),)
     c.execute('SELECT id FROM users WHERE id=?', t)
     row = c.fetchone()
+    # Check if a row was returned
     if row == None:
-        headers = {'access_token': str(google_token)}
-        r = requests.get('https://www.googleapis.com/plus/v1/people/me?access_token=' + google_token, headers=headers)
+        # Send a request to Google to get the user's name
+        r = requests.get('https://www.googleapis.com/plus/v1/people/me?access_token=' + google_token)
+        # Get the name from the response, ready to insert
         t = (r.json()['displayName'], str(google_id))
+        # Insert into the DB
         c.execute('INSERT INTO users (name, id, admin) VALUES (?, ?, 0)', t)
-        t = (str(google_id),)
-        c.execute('SELECT id FROM users WHERE id=?', t)
-        return c.fetchone()[0]
+        # Return the ID
+        return google_id
     else:
+        # Return the ID
         return row[0]
 
 
+# Get the name of the user from the database, given their ID
+# TODO: move this into a database/user class
 def get_user_name(user_id):
     c = conn.cursor()
     t = (user_id,)
     c.execute('SELECT name FROM users WHERE id=?', t)
     row = c.fetchone()
     if row == None:
+        # Not found, return the empty string
         return ''
     else:
         return row[0]
@@ -42,30 +50,35 @@ def get_user_name(user_id):
 
 @app.route('/')
 def index():
-  if 'user_id' not in flask.session:
-    return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
-  credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
-  if credentials.access_token_expired:
-    return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
-  else:
-    http_auth = credentials.authorize(httplib2.Http())
-    return 'Logged in as ' + get_user_name(flask.session['user_id']) + '!'
+    # Check if session does not contain a user ID - ask for login
+    if 'user_id' not in flask.session:
+        return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
+    # Get credentials from session
+    credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+    # If access token is expired - ask for login
+    if credentials.access_token_expired:
+        return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
+    else:
+        # User is logged in
+        http_auth = credentials.authorize(httplib2.Http())
+        return 'Logged in as ' + get_user_name(flask.session['user_id']) + '!'
 
 @app.route('/oauth2callback')
 def oauth2callback():
-  flow = client.flow_from_clientsecrets(
+    # Callback from Google
+    flow = client.flow_from_clientsecrets(
       'client_secrets.json',
       scope='profile',
       redirect_uri=flask.url_for('oauth2callback', _external=True))
-  if 'code' not in flask.request.args:
-    auth_uri = flow.step1_get_authorize_url()
-    return flask.redirect(auth_uri)
-  else:
-    auth_code = flask.request.args.get('code')
-    credentials = flow.step2_exchange(auth_code)
-    flask.session['credentials'] = credentials.to_json()
-    flask.session['user_id'] = create_or_update_user(json.loads(credentials.to_json())['id_token']['sub'], json.loads(credentials.to_json())['access_token'])
-    return flask.redirect(flask.url_for('index'))
+    if 'code' not in flask.request.args:
+        auth_uri = flow.step1_get_authorize_url()
+        return flask.redirect(auth_uri)
+    else:
+        auth_code = flask.request.args.get('code')
+        credentials = flow.step2_exchange(auth_code)
+        flask.session['credentials'] = credentials.to_json()
+        flask.session['user_id'] = create_or_update_user(json.loads(credentials.to_json())['id_token']['sub'], json.loads(credentials.to_json())['access_token'])
+        return flask.redirect(flask.url_for('index'))
 
 if __name__ == '__main__':
   import uuid
