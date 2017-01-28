@@ -9,13 +9,14 @@ def calculate_overlap(G, source_paper, target_paper):
     return len(overlap_edges)
 
 def add_overlap(G):
+    H = G
     for node1 in G.nodes():
         for node2 in set(G[node1].keys()):
             for node3 in set(G[node2].keys()):
-                if not G.has_edge(node1, node3):
-                    G.add_edge(node1, node3, first=0, second=0)
-                G[node1][node3]['second'] += 1
-    return G
+                if not H.has_edge(node1, node3):
+                    H.add_edge(node1, node3, first=0, second=0)
+                H[node1][node3]['second'] += 1
+    return H
 
 
 def read_cit_HepPh():
