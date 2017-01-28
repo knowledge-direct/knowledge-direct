@@ -1,4 +1,5 @@
 import sys
+import requests
 import networkx as nx
 sys.path.append('../')
 
@@ -37,6 +38,18 @@ class Database:
         """, (citing, cited, value))
         self.conn.commit()
 
+    def add_familiar(self, user_id, paper_id, value=1):
+        self.curs.execute("""
+            INSERT INTO familiarities(user, paper, value)
+            VALUES (?, ?, ?);
+        """, (user_id, paper_id, value))
+        self.conn.commit()
+
+    def remove_familiar(self, user_id, paper_id):
+        self.curs.execute("""
+            DELETE FROM familiarities WHERE user=? AND paper=?;
+        """, (user_id, paper_id))
+        self.conn.commit()
 
     def get_citation_network(self):
         citation_graph = nx.Graph()
@@ -81,7 +94,7 @@ class Database:
                 """, (user, page_size*page, page_size))
 
         results = self.curs.fetchall()
-        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+        return [{'paper_id': res[3], 'title': res[4], 'author': res[5], 'date': res[6], 'key_words': res[7]} for res in results]
 
     def list_papers_unread(self, user, page_size=None, page=0):
         if page_size is None:
@@ -93,4 +106,37 @@ class Database:
                 SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0) LIMIT ?, ?;
                 """, (user, page_size*page, page_size))
         results = self.curs.fetchall()
-        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+        return [{'paper_id': res[0], 'title': res[1], 'author': res[2], 'date': res[3], 'key_words': res[4]} for res in results]
+
+    # Method for checking if a user exists, if not then creating a new record
+    # followed by returning the user's ID
+    def create_or_update_user(self, google_id, google_token):
+        # Get a new cursor, and select the first row from the query
+        t = (str(google_id),)
+        self.curs.execute('SELECT id FROM users WHERE id=?', t)
+        row = self.curs.fetchone()
+        # Check if a row was returned
+        if row == None:
+            # Send a request to Google to get the user's name
+            r = requests.get('https://www.googleapis.com/plus/v1/people/me?access_token=' + google_token)
+            # Get the name from the response, ready to insert
+            t = (r.json()['displayName'], str(google_id))
+            # Insert into the DB
+            self.curs.execute('INSERT INTO users (name, id, admin) VALUES (?, ?, 0)', t)
+            # Return the ID
+            return google_id
+        else:
+            # Return the ID
+            return row[0]
+
+
+    # Get the name of the user from the database, given their ID
+    def get_user_name(self, user_id):
+        t = (user_id,)
+        self.curs.execute('SELECT name FROM users WHERE id=?', t)
+        row = self.curs.fetchone()
+        if row == None:
+            # Not found, return the empty string
+            return ''
+        else:
+            return row[0]
