@@ -6,7 +6,7 @@ import json
 import sqlite3
 import requests
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_url_path='/static')
 
 conn = sqlite3.connect('db/database.db')
 
@@ -47,21 +47,30 @@ def get_user_name(user_id):
     else:
         return row[0]
 
-
 @app.route('/')
 def index():
+    return flask.render_template('main.html')
+
+
+@app.route('/logged_in')
+def is_logged_in():
     # Check if session does not contain a user ID - ask for login
     if 'user_id' not in flask.session:
-        return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
+        return flask.jsonify({'status': False, 'name': '', 'redirect_uri': flask.url_for('oauth2callback') })
     # Get credentials from session
     credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
     # If access token is expired - ask for login
     if credentials.access_token_expired:
-        return 'Logged out <a href="' + flask.url_for('oauth2callback') + '">Log in</a>'
+        return flask.jsonify({'status': False, 'name': '', 'redirect_uri': flask.url_for('oauth2callback') })
     else:
         # User is logged in
         http_auth = credentials.authorize(httplib2.Http())
-        return 'Logged in as ' + get_user_name(flask.session['user_id']) + '!'
+        return flask.jsonify({'status': True, 'name': get_user_name(flask.session['user_id']), 'redirect_uri': flask.url_for('oauth2callback') })
+
+@app.route('/logout')
+def logout():
+    flask.session = []
+    return flask.redirect(flask.url_for('index'))
 
 @app.route('/oauth2callback')
 def oauth2callback():
