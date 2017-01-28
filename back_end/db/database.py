@@ -47,3 +47,27 @@ class Database:
             citation_graph.add_nodes_from([p1, p2])  # nodes are a set, duplicates are dealt with
             citation_graph.add_edge(p1, p2, is_cited=1)
         return citation_graph
+
+
+    def list_papers(self):
+        self.curs.execute("""
+            SELECT * FROM papers;
+            """)
+        results = self.curs.fetchall()
+        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+
+
+
+    def list_papers_read(self, user):
+        self.curs.execute("""
+            SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0
+            """, (user,))
+        results = self.curs.fetchall()
+        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+
+    def list_papers_unread(self, user):
+        self.curs.execute("""
+            SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)
+            """, (user,))
+        results = self.curs.fetchall()
+        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
