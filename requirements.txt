@@ -1,2 +1,4 @@
 ## install these using pip3 install -r requirements.txt
 flask
+httplib2
+oauth2client
