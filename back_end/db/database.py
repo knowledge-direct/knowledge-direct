@@ -67,7 +67,7 @@ class Database:
                 SELECT * FROM papers LIMIT ?, ?;
                 """, (page_size*page, page_size))
         results = self.curs.fetchall()
-        return [{paper_id: res[0], title: res[1], author: res[2], date: res[3], key_words: res[4]} for res in results]
+        return [{'paper_id': res[0], 'title': res[1], 'author': res[2], 'date': res[3], 'key_words': res[4]} for res in results]
 
 
     def list_papers_read(self, user, page_size=None, page=0):

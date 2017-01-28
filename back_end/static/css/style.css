@@ -45,6 +45,65 @@ header a {
   top: 10px;
 }
 
+h3 {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
 .hide {
   display: none !important;
+}
+
+.scroll {
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.paper-list, .target-list {
+  list-style: none;
+  padding: 1em;
+}
+
+.paper-list label, .target-list label {
+  display: block;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  cursor: pointer;
+}
+
+.paper-list label:hover, .target-list label:hover {
+  background-color: #eee;
+}
+
+.submit-area {
+  vertical-align: top;
+}
+
+input[type=submit], button {
+  background-color: #6DAA30;
+  padding: 0.5em 1em;
+  min-width: 10em;
+  margin: 0.5em 0.5em;
+  display: inline-block;
+  text-align: center;
+  appearance: none;
+  border: 0;
+  border-radius: 100em;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+input[type=submit]:hover, button:hover {
+  background-color: #4C8018;
+}
+
+section.target, section.target-button {
+  display: none;
+}
+
+section.target-button, section.base-button {
+  position: fixed;
+  top: 40px;
+  right: 10px;
 }
