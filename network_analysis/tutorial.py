@@ -14,8 +14,7 @@ def miles_graph():
     """ Return the cites example graph in miles_dat.txt
         from the Stanford GraphBase.
     """
-    # open file miles_dat.txt.gz (or miles_dat.txt)
-    fh = open('miles.dat','r')
+    fh = open('../../datasets/miles.dat','r')
 
     G=nx.Graph()
     G.position={}
@@ -31,7 +30,7 @@ def miles_graph():
         if numfind.match(line): # this line is distances
             dist=line.split()
             for d in dist:
-                G.add_edge(city,cities[i],weight=int(d))
+                G.add_edge(city,cities[i],weight=int(d),second=0,first=1)
                 i=i+1
         else: # this line is a city, position, population
             i=1
