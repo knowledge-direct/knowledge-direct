@@ -1,12 +1,12 @@
+import networkx as nx
+import gzip
+
 def read_cit_HepPh():
-    import networkx as nx
-    import gzip
     graph_file = gzip.open("../../datasets/cit-HepPh.txt.gz", "r")
 
     citation_graph = nx.Graph()
     for line in graph_file.readlines():
         line = line.decode().strip()
-
         if line.startswith("#"):  # skip comments
             continue
         else:

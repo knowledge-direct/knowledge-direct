@@ -1,6 +1,3 @@
-import numpy as np
-import matplotlib
-import read_graph
 import networkx as nx
 
 def calculate_overlap(G, source_paper, target_paper):
@@ -13,7 +10,8 @@ def calculate_overlap(G, source_paper, target_paper):
 def get_papers(G, source_paper, target_paper, max_step_size):
     whole_path = nx.shortest_path(G, source_paper, target_paper)
 
-    papers_in_path=[].append(source_paper)
+    papers_in_path=[]
+    papers_in_path.append(source_paper)
     differences=[]
     cum_weights = 0
     for i in range(1,len(whole_path)):
@@ -30,15 +28,4 @@ def get_papers(G, source_paper, target_paper, max_step_size):
             papers_in_path.append(node1)
 
     papers_in_path.append(target_paper)
-    #print(whole_path)
-    #print(differences)
     return(papers_in_path)
-
-citation_graph=read_graph.read_cit_HepPh()
-print("Graph read")
-
-paper1="9907233"
-paper2="9804209"
-
-#print(citation_graph.nodes())
-print(get_papers(citation_graph, paper1, paper2, 2))
