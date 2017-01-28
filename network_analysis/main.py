@@ -1,7 +1,8 @@
 import read_graph
 import recommend_papers
 
-citation_graph=read_graph.read_cit_HepPh()
+citation_graph = read_graph.read_cit_HepPh()
+citation_graph = read_graph.add_overlap(citation_graph)
 print("Graph read")
 
 n_steps=30
