@@ -1,4 +1,5 @@
 import sys
+import networkx as nx
 sys.path.append('../')
 
 import sqlite3
@@ -38,12 +39,18 @@ class Database:
 
 
     def get_citation_network(self):
+        citation_graph = nx.Graph()
         self.curs.execute("""
-            SELECT (citing, cited) FROM connections;
+            SELECT id, title, author, date, key_words FROM papers;
             """)
         results = self.curs.fetchall()
-        citation_graph = nx.Graph()
+        for id, title, author, date, key_words in results:
+            citation_graph.add_node(id, title=title, author=author, date=date, key_words=key_words)
+
+        self.curs.execute("""
+            SELECT citing, cited FROM connections;
+            """)
+        results = self.curs.fetchall()
         for p1, p2 in results:
-            citation_graph.add_nodes_from([p1, p2])  # nodes are a set, duplicates are dealt with
-            citation_graph.add_edge(p1, p2, is_cited=1)
+            citation_graph.add_edge(p1, p2)
         return citation_graph

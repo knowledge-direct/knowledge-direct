@@ -1,1 +1,1 @@
-DB_ADDR = '../db/database.db'
+DB_ADDR = '../back_end/db/database.db'
