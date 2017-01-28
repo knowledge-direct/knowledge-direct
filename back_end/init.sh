@@ -17,7 +17,7 @@ mkdir -p db
 sqlite3 $DB '
     CREATE TABLE users(
     id TEXT PRIMARY KEY,
-    email TEXT NOT NULL, 
+    name TEXT NOT NULL,
     admin BOOLEAN DEFAULT 0 NOT NULL
     )' || true
 sqlite3 $DB '
@@ -45,4 +45,3 @@ sqlite3 $DB '
 
 
 #sqlite3 $DB < ./dummy_data/import.sql
-
