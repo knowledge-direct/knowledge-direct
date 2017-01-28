@@ -14,25 +14,21 @@ def calculate_overlap(G, source_paper, target_paper):
 
 def add_first(G):
     for node1 in G.nodes():
-        for node2 in set(G[node1].keys()):
+        for node2 in G.neighbors(node1):
             G[node1][node2]['first_deg'] = 1
     return G
 
 
 def add_second(G):
     H = G
-    for node1 in G.nodes():
-        for node2 in set(G[node1].keys()):
-            H[node1][node2]['num_second_deg'] = 0
 
     for node1 in G.nodes():
-        for node2 in set(G[node1].keys()):
-            for node3 in set(G[node2].keys()):
+        for node2 in G.neighbors(node1):
+            for node3 in G.neighbors(node2):
                 if not H.has_edge(node1, node3):
-                    H.add_edge(node1, node3, first_deg=0, num_second_deg=0)
+                    H.add_edge(node1, node3, num_second_deg=0)
                 if not G.has_edge(node1, node3):
                     H[node1][node3]['num_second_deg'] += 1
-                    print('here')
     return H
 
 

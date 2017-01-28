@@ -54,7 +54,7 @@ class Database:
             citation_graph.add_node(id, title=title, author=author, date=date, key_words=key_words)
 
         self.curs.execute("""
-            SELECT paper_one, paper_two FROM connections WHERE citing=0;
+            SELECT paper_one, paper_two FROM connections WHERE citing=1;
             """)
         results = self.curs.fetchall()
         for p1, p2 in results:
