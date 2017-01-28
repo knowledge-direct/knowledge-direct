@@ -9,6 +9,8 @@
 
 
 def miles_graph():
+    import networkx as nx
+    import re
     """ Return the cites example graph in miles_dat.txt
         from the Stanford GraphBase.
     """
