@@ -55,3 +55,42 @@ class Database:
             if citation_graph.has_node(p1) and citation_graph.has_node(p2):
                 citation_graph.add_edge(p1, p2)
         return citation_graph
+
+
+    def list_papers(self, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM papers;
+                """)
+        else:
+            self.curs.execute("""
+                SELECT * FROM papers LIMIT ?, ?;
+                """, (page_size*page, page_size))
+        results = self.curs.fetchall()
+        return [{paper_id: res[0], title: res[1], author: res[2], date: res[3], key_words: res[4]} for res in results]
+
+
+    def list_papers_read(self, user, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0;
+                """, (user,))
+        else:
+            self.curs.execute("""
+                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0 LIMIT ?, ?;
+                """, (user, page_size*page, page_size))
+
+        results = self.curs.fetchall()
+        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
+
+    def list_papers_unread(self, user, page_size=None, page=0):
+        if page_size is None:
+            self.curs.execute("""
+                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0);
+                """, (user,))
+        else:
+            self.curs.execute("""
+                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0) LIMIT ?, ?;
+                """, (user, page_size*page, page_size))
+        results = self.curs.fetchall()
+        return ['{}: {}: {}'.format(res[2], res[3], res[1]) for res in results]
