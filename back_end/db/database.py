@@ -57,7 +57,8 @@ class Database:
                 UPDATE connections SET {}=? WHERE paper_one=? and paper_two=?;
             """.format(key), (kwargs[key], citing, cited))
 
-    def get_citation_network(self):
+
+    def get_network_with_nodes(self):
         citation_graph = nx.Graph()
         self.curs.execute("""
             SELECT id, title, author, date, key_words FROM papers;
@@ -65,14 +66,34 @@ class Database:
         results = self.curs.fetchall()
         for identifier, title, author, date, key_words in results:
             citation_graph.add_node(identifier, title=title, author=author, date=date, key_words=key_words)
+        return citation_graph
 
+    def get_citation_network(self):
+        citation_graph = get_network_with_nodes(self)
         self.curs.execute("""
-            SELECT paper_one, paper_two, weight FROM connections WHERE citing=1;
-            """)
+            SELECT paper_one, paper_two FROM connections WHERE citing>0;
+            """, args)
+        results = self.curs.fetchall()
+        for p1, p2 in results:
+            if citation_graph.has_node(p1) and citation_graph.has_node(p2):
+                citation_graph.add_edge(p1, p2)
+        return citation_graph
+
+    def get_weight_network(self, max_weight=None):
+        citation_graph = get_network_with_nodes(self)
+        self.curs.execute("""
+            SELECT paper_one, paper_two, weight FROM connections
+            """, args)
         results = self.curs.fetchall()
         for p1, p2, weight in results:
             if citation_graph.has_node(p1) and citation_graph.has_node(p2):
-                citation_graph.add_edge(p1, p2, weight=weight)
+                if max_weight is None: 
+                    citation_graph.add_edge(p1, p2, weight=weight)
+                else:
+                    if weight < max_weight:
+                        citation_graph.add_edge(p1, p2, weight=1)
+                    else:
+                        citation_graph.add_edge(p1, p2, weight=1+(weight-max_weight)*config.DIFFICULT_PAPER_MULTIPLIER)
         return citation_graph
 
 

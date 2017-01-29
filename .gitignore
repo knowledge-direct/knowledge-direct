@@ -94,3 +94,5 @@ client_secrets.json
 .idea
 .idea/
 
+
+config.py
