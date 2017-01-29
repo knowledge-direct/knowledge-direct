@@ -4,58 +4,17 @@ from oauth2client import client
 import os
 import json
 import sqlite3
-import requests
 from db import database
 
 app = flask.Flask(__name__, static_url_path='/static')
 
-conn = sqlite3.connect('db/database.db')
-
 d = database.Database('db/database.db')
-
-
-# Method for checking if a user exists, if not then creating a new record
-# followed by returning the user's ID
-# TODO: move this into a database/user class
-def create_or_update_user(google_id, google_token):
-    # Get a new cursor, and select the first row from the query
-    c = conn.cursor()
-    t = (str(google_id),)
-    c.execute('SELECT id FROM users WHERE id=?', t)
-    row = c.fetchone()
-    # Check if a row was returned
-    if row == None:
-        # Send a request to Google to get the user's name
-        r = requests.get('https://www.googleapis.com/plus/v1/people/me?access_token=' + google_token)
-        # Get the name from the response, ready to insert
-        t = (r.json()['displayName'], str(google_id))
-        # Insert into the DB
-        c.execute('INSERT INTO users (name, id, admin) VALUES (?, ?, 0)', t)
-        # Return the ID
-        return google_id
-    else:
-        # Return the ID
-        return row[0]
-
-
-# Get the name of the user from the database, given their ID
-# TODO: move this into a database/user class
-def get_user_name(user_id):
-    c = conn.cursor()
-    t = (user_id,)
-    c.execute('SELECT name FROM users WHERE id=?', t)
-    row = c.fetchone()
-    if row == None:
-        # Not found, return the empty string
-        return ''
-    else:
-        return row[0]
 
 
 def user_logged_in(session):
     user_name = None
     if 'user_id' in flask.session:
-        user_name = get_user_name(flask.session['user_id'])
+        user_name = d.get_user_name(flask.session['user_id'])
     if user_name == '' or user_name == None:
         return False
     return True
@@ -65,16 +24,17 @@ def user_logged_in(session):
 def index():
     user_name = None
     if 'user_id' in flask.session:
-        user_name = get_user_name(flask.session['user_id'])
+        user_name = d.get_user_name(flask.session['user_id'])
     if user_name == '':
         user_name = None
     if user_logged_in(flask.session):
-        papers = d.list_papers()
-        return flask.render_template('logged_in.html', user_name=user_name, papers=papers)
+        unread_papers = d.list_papers_unread(flask.session['user_id'])
+        read_papers = d.list_papers_read(flask.session['user_id'])
+        return flask.render_template('logged_in.html', user_name=user_name, unread_papers=unread_papers, read_papers=read_papers)
     else:
         return flask.render_template('main.html', user_name=user_name)
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
     target = None
     start_papers = []
@@ -86,6 +46,19 @@ def search():
                 start_papers += [item[0]]
     search_data = { 'target': target, 'start_papers': start_papers }
     return flask.jsonify(search_data)
+
+@app.route('/mark_read', methods=['POST'])
+def mark_read():
+    if user_logged_in(flask.session):
+        d.add_familiar(flask.session['user_id'], flask.request.form['paper'])
+    return flask.jsonify({})
+
+
+@app.route('/mark_unread', methods=['POST'])
+def mark_unread():
+    if user_logged_in(flask.session):
+        d.remove_familiar(flask.session['user_id'], flask.request.form['paper'])
+    return flask.jsonify({})
 
 
 @app.route('/logged_in')
@@ -101,7 +74,7 @@ def is_logged_in():
     else:
         # User is logged in
         http_auth = credentials.authorize(httplib2.Http())
-        return flask.jsonify({'status': True, 'name': get_user_name(flask.session['user_id']), 'redirect_uri': flask.url_for('oauth2callback') })
+        return flask.jsonify({'status': True, 'name': d.get_user_name(flask.session['user_id']), 'redirect_uri': flask.url_for('oauth2callback') })
 
 @app.route('/logout')
 def logout():
@@ -122,7 +95,7 @@ def oauth2callback():
         auth_code = flask.request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
         flask.session['credentials'] = credentials.to_json()
-        flask.session['user_id'] = create_or_update_user(json.loads(credentials.to_json())['id_token']['sub'], json.loads(credentials.to_json())['access_token'])
+        flask.session['user_id'] = d.create_or_update_user(json.loads(credentials.to_json())['id_token']['sub'], json.loads(credentials.to_json())['access_token'])
         return flask.redirect(flask.url_for('index'))
 
 if __name__ == '__main__':

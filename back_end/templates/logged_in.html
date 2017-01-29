@@ -1,36 +1,54 @@
 {% extends "main.html" %}
 {% block content %}
-<form action="/search" method="post">
-  <table>
-    <tr>
-      <td class="scroll">
-        <section class="base">
-          <h3>Select Base Papers:</h3>
-          <ul class="paper-list">
-            {% for paper in papers %}
-              <li><label><table><tr><td><input type="checkbox" name="{{ paper['paper_id'] }}"/></td><td><b>{{ paper['title'] }}</b><br>{{ paper['author'] }} ({{ paper['date'] }})</td></tr></table></label></li>
-            {% endfor %}
-          </ul>
-        </section>
-        <section class="target">
-          <h3>Select Target Papers:</h3>
-          <ul class="target-list">
-            {% for paper in papers %}
-              <li><label><table><tr><td><input type="radio" name="target" value="{{ paper['paper_id'] }}"/></td><td><b>{{ paper['title'] }}</b><br>{{ paper['author'] }} ({{ paper['date'] }})</td></tr></table></label></li>
-            {% endfor %}
-          </ul>
-        </section>
-      </td>
-      <td class="submit-area">
-        <section class="base-button">
-          <button class="next">Next</button>
-        </section>
-        <section class="target-button">
-          <button class="back">Back</button>
-          <input type="submit" value="Search"/>
-        </section>
-      </td>
-    </tr>
-  </table>
-</form>
+<h3>Select Base Papers:</h3>
+<ul class="paper-list">
+  {% for paper in unread_papers %}
+    <li>
+      <table>
+        <tr>
+          <td data-paper-id="{{ paper['paper_id'] }}" data-read="0" class="unread">
+            <span class="toggle-read">
+              <img src="/static/img/unchecked.svg" class="unchecked"/>
+              <img src="/static/img/checked.svg" class="checked"/>
+            </span>
+            <span class="find-shortest-path">
+              <a href="/search?paper={{ paper['paper_id'] }}">
+                <img src="/static/img/path.svg" class="path"/>
+              </a>
+            </span>
+          </td>
+          <td>
+            <b>{{ paper['title'] }}</b>
+            <br>
+            {{ paper['author'] }} ({{ paper['date'] }})
+          </td>
+        </tr>
+      </table>
+    </li>
+  {% endfor %}
+  {% for paper in read_papers %}
+    <li>
+      <table>
+        <tr>
+          <td data-paper-id="{{ paper['paper_id'] }}" data-read="1" class="read">
+            <span class="toggle-read">
+              <img src="/static/img/unchecked.svg" class="unchecked"/>
+              <img src="/static/img/checked.svg" class="checked"/>
+            </span>
+            <span class="find-shortest-path">
+              <a href="/search?paper={{ paper['paper_id'] }}">
+                <img src="/static/img/path.svg" class="path"/>
+              </a>
+            </span>
+          </td>
+          <td>
+            <b>{{ paper['title'] }}</b>
+            <br>
+            {{ paper['author'] }} ({{ paper['date'] }})
+          </td>
+        </tr>
+      </table>
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}

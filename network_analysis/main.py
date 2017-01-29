@@ -5,16 +5,18 @@ sys.path.append("../back_end/db")
 sys.path.append("../back_end/corpus_creation")
 
 import matplotlib
-import network_analysis_utils
+import network_analysis
+import keyword_analysis
 import recommend_papers
 import database
 
 #citation_graph = read_graph.read_cit_HepPh()
 db = database.Database()
 citation_graph = db.get_citation_network()
-citation_graph = network_analysis_utils.add_first(citation_graph)
-citation_graph = network_analysis_utils.add_second(citation_graph)
-citation_graph = network_analysis_utils.add_keyword_overlap(citation_graph)
+citation_graph = network_analysis.add_first(citation_graph)
+print(citation_graph.edges(data = True))
+citation_graph = network_analysis.add_second(citation_graph)
+citation_graph = keyword_analysis.add_keyword_overlap(citation_graph)
 
 print(citation_graph.nodes(data = True))
 print(citation_graph.edges(data = True))
