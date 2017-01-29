@@ -4,12 +4,13 @@ from oauth2client import client
 import os
 import json
 import sqlite3
+import config
 from db import database
 from service_algorithms import recommend_papers
 
 app = flask.Flask(__name__, static_url_path='/static')
 
-d = database.Database('db/database.db')
+d = database.Database(config.DB_ADDR)
 
 
 def user_logged_in(session):
@@ -48,11 +49,35 @@ def search():
         return flask.redirect(flask.url_for('index'))
 
 
+@app.route('/search_multiple')
+def search_multiple():
+    user_name = None
+    if 'user_id' in flask.session:
+        user_name = d.get_user_name(flask.session['user_id'])
+    if user_name == '':
+        user_name = None
+    if user_logged_in(flask.session):
+        unread_papers = d.list_papers_unread(flask.session['user_id'])
+        return flask.render_template('search_multiple.html', user_name=user_name, unread_papers=unread_papers)
+    else:
+        return flask.redirect(flask.url_for('index'))
+
+
 @app.route('/search_json')
 def search_json():
     if user_logged_in(flask.session):
-        list_of_papers = recommend_papers.get_shortest_path_recommendation(d, flask.session['user_id'], flask.request.args['paper'])
-        return flask.jsonify(list_of_papers)
+        list_of_papers = None
+        if 'paper' in flask.request.args:
+            list_of_papers = recommend_papers.get_shortest_path_recommendation(d, flask.session['user_id'], flask.request.args['paper'])
+            return flask.jsonify(list_of_papers)
+        else:
+            paper_id_list = []
+            for (k, v) in flask.request.args.items():
+                if v == 'on':
+                    paper_id_list += [k]
+            return flask.jsonify(paper_id_list)
+
+            # list_of_papers = recommend_papers.get_shortest_path_recommendation(d, flask.session['user_id'], flask.request.args['paper'])
     else:
         return flask.jsonify({})
 
@@ -95,7 +120,7 @@ def logout():
 def oauth2callback():
     # Callback from Google
     flow = client.flow_from_clientsecrets(
-      'client_secrets.json',
+      config.CLIENT_SECRETS,
       scope='profile',
       redirect_uri=flask.url_for('oauth2callback', _external=True))
     if 'code' not in flask.request.args:

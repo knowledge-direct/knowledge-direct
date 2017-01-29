@@ -1,0 +1,38 @@
+{% extends "main.html" %}
+{% block header %}
+  <a href="/" class="button multiple-targets">Back</a>
+{% endblock %}
+{% block content %}
+<form action="/search" method="get">
+  <h3>Select multiple target papers</h3>
+    <p class="desc">Select many papers from the list for targets, then press "Find path" to search, or press "Back" to go back to the homepage</p>
+  <input type="text" placeholder="Filter list by title or author" class="paper-search"/>
+  <ul class="paper-list">
+    {% for paper in unread_papers %}
+      <li>
+        <label>
+          <table>
+            <tr>
+              <td data-paper-id="{{ paper['paper_id'] }}" class="unread">
+                <input type="checkbox" name="{{ paper['paper_id'] }}">
+                <span class="find-shortest-path">
+                  <a href="/search?paper={{ paper['paper_id'] }}">
+                    <img src="/static/img/path.svg" class="path"/>
+                  </a>
+                </span>
+
+              </td>
+              <td>
+                <b>{{ paper['title'] }}</b>
+                <br>
+                {{ paper['author'] }} ({{ paper['date'] }})
+              </td>
+            </tr>
+          </table>
+        </label>
+      </li>
+    {% endfor %}
+  </ul>
+  <p><input type="submit" value="Find Path"/></p>
+</form>
+{% endblock %}

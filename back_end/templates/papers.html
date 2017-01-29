@@ -1,6 +1,11 @@
 {% extends "main.html" %}
+{% block header %}
+<a href="/search_multiple" class="button multiple-targets">Multiple paper path search</a>
+{% endblock %}
 {% block content %}
-<h3>Papers <input type="text" placeholder="Search by title or author" class="paper-search"/></h3>
+<h3>All Papers</h3>
+<p class="desc">Check papers you've read, tap on the map to get a path to the unread paper, filter papers using the search box, and start a multiple paper path search using the button above</p>
+<input type="text" placeholder="Filter list by title or author" class="paper-search"/>
 <ul class="paper-list">
   {% for paper in unread_papers %}
     <li>
