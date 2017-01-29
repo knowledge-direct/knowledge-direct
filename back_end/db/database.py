@@ -69,10 +69,10 @@ class Database:
         return citation_graph
 
     def get_citation_network(self):
-        citation_graph = get_network_with_nodes(self)
+        citation_graph = self.get_network_with_nodes()
         self.curs.execute("""
             SELECT paper_one, paper_two FROM connections WHERE citing>0;
-            """, args)
+            """)
         results = self.curs.fetchall()
         for p1, p2 in results:
             if citation_graph.has_node(p1) and citation_graph.has_node(p2):
@@ -80,10 +80,10 @@ class Database:
         return citation_graph
 
     def get_weight_network(self, max_weight=None):
-        citation_graph = get_network_with_nodes(self)
+        citation_graph = self.get_network_with_nodes()
         self.curs.execute("""
             SELECT paper_one, paper_two, weight FROM connections
-            """, args)
+            """)
         results = self.curs.fetchall()
         for p1, p2, weight in results:
             if citation_graph.has_node(p1) and citation_graph.has_node(p2):
