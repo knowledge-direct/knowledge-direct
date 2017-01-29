@@ -15,7 +15,7 @@ These distance estimates are an aggregations of several factors including whethe
 
 A shortest path is found on a network of unity weight edges for distances below a threshold and weights penalised above unity for distances above the threshold. This threshold is to model the users ability to move outside his field of knowledge and the weight of unity for comprehensible papers aims to minimize to number of new papers to read. So papers they find comfortable learning are included but papers that they would find challenging are penalised.
 
-Users can choose to explore a single paper or a set of papers. In the former case, papers in the shortest path are suggested. In the latter, the minimal number of papers are suggested such that the resulting graph consisting of the known papers, suggested papers and desired papers to explore is connected. This minimum spanning tree of the set of papers is found by finding the minimum spanning tree of the metric closure of the associated weighted network.
+Users can choose to explore a single paper or a set of papers. In the former case, papers in the shortest path are suggested. In the latter, the minimal number of papers are suggested such that the resulting graph consisting of the known papers, suggested papers and desired papers to explore is connected. This minimum spanning tree of this set of papers is found by finding the minimum spanning tree of the metric closure of the associated weighted network, with zero weight between already known papers.
 
 ## Getting Started
 
