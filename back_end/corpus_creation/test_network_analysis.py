@@ -22,6 +22,10 @@ citation_graph = network_analysis.add_weights(citation_graph, [1,1,1])
 
 paper1=list(citation_graph.nodes())[0]
 paper2=list(citation_graph.nodes())[29]
-print("Source paper: " + citation_graph.node[paper1]['title'])
-print("Target paper: " + citation_graph.node[paper2]['title'])
-print(recommend_papers.get_shortest_path_papers(citation_graph, paper1, paper2, 1))
+paper3=list(citation_graph.nodes())[22]
+paper4=list(citation_graph.nodes())[10]
+#print("Source paper: " + citation_graph.node[paper1]['title'])
+#print("Target paper: " + citation_graph.node[paper2]['title'])
+#print(recommend_papers.get_shortest_path_from_set(citation_graph, [paper1], paper2))
+
+set_path = recommend_papers.get_shortest_path_recommendation_set(db, [paper1,paper2], [paper3,paper4])

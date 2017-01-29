@@ -69,6 +69,12 @@ h3 {
   display: none !important;
 }
 
+.desc {
+  margin-left: 1em;
+  margin-right: 1em;
+  color: #888888;
+}
+
 /* List styles */
 
 .paper-list, .target-list {
@@ -78,8 +84,8 @@ h3 {
 
 /* Button styles */
 
-input[type=submit], button {
-  background-color: #6DAA30;
+input[type=submit], button, .button {
+  background-color: #888888;
   padding: 0.5em 1em;
   min-width: 10em;
   margin: 0.5em 0.5em;
@@ -91,10 +97,28 @@ input[type=submit], button {
   font-size: 1rem;
   color: white;
   cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-input[type=submit]:hover, button:hover {
+input[type=submit] {
+  background-color: #6DAA30;
+}
+
+button:hover, .button:hover {
+  background-color: #999999;
+}
+
+input[type=submit]:hover {
   background-color: #4C8018;
+}
+
+header input[type=submit], header button, header .button {
+  font-size: 1rem;
+  top: 0;
+  margin-top: -20px;
+  background-color: #333333;
+  padding: 0.25em 0.5em;
 }
 
 /* Checkbox and Path button styles */
@@ -130,6 +154,29 @@ input.paper-search {
   margin-left: 2em;
   padding: 0.5em 1em;
   width: 50%
+}
+
+input[type=checkbox].search {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  background-image: url('/static/img/search.svg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+input[type=checkbox].search:checked {
+  background-image: url('/static/img/search_checked.svg');
+}
+
+.paper-list-multiple label {
+  cursor: pointer;
+}
+
+.paper-list-multiple label:hover * {
+  background-color: #dddddd;
 }
 
 /* Search Graph styles */

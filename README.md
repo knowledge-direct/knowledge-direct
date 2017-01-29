@@ -45,3 +45,8 @@ python3 back_end/server.py
 * Yewno
 * OpenCitatioCorpus
 
+## Screenshots
+
+![Homepage](screenshots/1.png)
+![Homepage with papers marked as read](screenshots/2.png)
+![Graph showing papers](screenshots/3.png)
