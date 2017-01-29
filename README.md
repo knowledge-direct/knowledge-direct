@@ -1,4 +1,4 @@
-# Knowledge Direct
+# Knowledge Direct :books:
 
 A web app to find you the shortest research path, from your read papers to a target paper, displayed as a graph.
 
