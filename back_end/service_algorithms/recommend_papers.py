@@ -16,14 +16,13 @@ def get_shortest_path_recommendation(db, user, target_paper):
     papers_in_path_id = nx.shortest_path(G, closest_source, target_paper)
     papers_in_path_id.reverse()
     papers_in_path = db.list_papers_list(papers_in_path_id)
-    return papers_in_path
+    return (papers_in_path, G.edges())
 
 def get_shortest_path_recommendation_set(db, user, target_papers):
     G = db.get_citation_network()
     source_papers = [p['paper_id'] for p in db.list_papers_read(user)]
     if not source_papers:
         return []
-
     # Create contracted graph
     G_contracted = G
     for i in range(len(source_papers)):
@@ -79,7 +78,8 @@ def get_shortest_path_recommendation_set(db, user, target_papers):
     #print(papers_in_path_id)
     papers_in_path_id.reverse()
     papers_in_path = db.list_papers_list(papers_in_path_id)
-    return papers_in_path
+
+    return (papers_in_path, G.edges())
 
 def add_paper_to_path(papers_in_path_id, path_to_add, source_papers):
     for node in path_to_add:
