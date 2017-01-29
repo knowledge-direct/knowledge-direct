@@ -4,17 +4,12 @@ A web app to find you the shortest research path, from your read papers to a tar
 
 ## Getting Started
 
-First initialise the database:
-```bash
-sh back_end/db/init.sh
-```
-
-Install dependencies using (note: Python 3 and pip3 is required):
+Install dependencies (note: Python 3 and pip3 is required):
 ```bash
 pip3 install -r requirements.txt
 ```
 
-Run the server:
+Start the server:
 ```bash
 python3 back_end/server.py
 ```
