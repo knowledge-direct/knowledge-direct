@@ -26,9 +26,9 @@ def add_second(G):
     for node1 in G.nodes():
         for node2 in G.neighbors(node1):
             for node3 in G.neighbors(node2):
-                if not H.has_edge(node1, node3):
-                    H.add_edge(node1, node3, num_second_deg=0)
-                if not G.has_edge(node1, node3):
+                if node1 != node3 and not G.has_edge(node1, node3):
+                    if not H.has_edge(node1, node3):
+                        H.add_edge(node1, node3, num_second_deg=0)
                     H[node1][node3]['num_second_deg'] += 1
     return H
 
@@ -37,7 +37,7 @@ def add_weights(G, coeffs):
     for (u, v, d) in G.edges(data=True):
         d_default = defaultdict(int, d)
         #d['weight'] = coeffs[0]*d_default['first_deg'] + coeffs[1]*d_default['n_second_deg'] + coeffs[2]*d_default['keyword_overlap']
-        d['weight'] = 1/(d_default['first_deg'] + 0.1*d_default['n_second_deg'] + d_default['keyword_overlap'])
+        d['weight'] = 1/(d_default['first_deg'] + 0.1*d_default['num_second_deg'] + d_default['keyword_overlap'])
     return G
 
 if __name__ == '__main__':

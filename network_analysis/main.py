@@ -23,4 +23,4 @@ print(citation_graph.edges(data = True))
 
 paper1=21480391
 paper2=23494858
-print(recommend_papers.get_papers(citation_graph, paper1, paper2, 1))
+print(recommend_papers.get_shortest_path_papers(citation_graph, paper1, paper2, 1))
