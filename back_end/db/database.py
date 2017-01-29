@@ -63,8 +63,7 @@ class Database:
         return citation_graph
 
 
-    def list_papers(self, query='', user=None, page_size=None, page=0):
-        args = []
+    def list_papers(self, query='', args=[], page_size=None, page=0):
         limit = ''
         if user is not None:
             args.append(user)
@@ -78,14 +77,21 @@ class Database:
         results = self.curs.fetchall()
         return [{'paper_id': res[0], 'title': res[1], 'author': res[2], 'date': res[3], 'key_words': res[4]} for res in results]
 
+    def list_papers_list(self, paper_list, page_size=None, page=0):
+        ret = []
+        for paper in paper_list:
+            ret += list_papers(self, query="""AS p WHERE p.id=?""",
+                                 args=[paper_list,], page_size=page_size, page=page)
+        return ret
+
 
     def list_papers_read(self, user, page_size=None, page=0):
         return list_papers(self, query="""AS p WHERE p.id IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
-                             user=user, page_size=page_size, page=page)
+                             args=[user,], page_size=page_size, page=page)
 
     def list_papers_unread(self, user, page_size=None, page=0):
         return list_papers(self, query="""AS p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
-                             user=user, page_size=page_size, page=page)
+                             args=[user,], page_size=page_size, page=page)
 
 
 if __name__ == '__main__':
