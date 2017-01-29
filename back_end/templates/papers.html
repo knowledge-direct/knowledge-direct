@@ -1,7 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
-<h3>Papers</h3>
-<input type="text" placeholder="Search by title or author" class="paper-search"/>
+<h3>Papers <input type="text" placeholder="Search by title or author" class="paper-search"/></h3>
 <ul class="paper-list">
   {% for paper in unread_papers %}
     <li>

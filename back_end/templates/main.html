@@ -9,7 +9,6 @@
       <div class="header-left"><a href="/"><h1>Knowledge Direct</h1></a></div>
       <div class="header-right">
         {% if user_name == None %}
-        <a href="/oauth2callback" class="logged-out">Sign in with Google</a>
         {% else %}
         <span class="logged-in">Logged in as <span class="user-name">{{ user_name }}</span> - <a href="/logout">Log out</a></span>
         {% endif %}

@@ -9,6 +9,10 @@ html, body {
   margin: 0;
 }
 
+.center {
+  text-align: center;
+}
+
 /* Header styles */
 
 h1 {
