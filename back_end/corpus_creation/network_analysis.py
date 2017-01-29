@@ -7,12 +7,6 @@ import networkx as nx
 import gzip
 
 
-def calculate_overlap(G, source_paper, target_paper):
-    source_edges = set(G[source_paper].keys())
-    target_edges = set(G[target_paper].keys())
-    overlap_edges = source_edges.intersection(target_edges)  # Number of path of at most 2 - 1
-    return len(overlap_edges)
-
 def add_first(G):
     for node1 in G.nodes():
         for node2 in G.neighbors(node1):

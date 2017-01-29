@@ -19,7 +19,20 @@
         });
       }
     });
+  });
 
+  $('.paper-search').on('keyup', function() {
+    $('.paper-list li').each(function() {
+      if ($('.paper-search').val() != '') {
+        if ($(this).text().toLowerCase().indexOf($('.paper-search').val()) > -1) {
+          $(this).removeClass('hide');
+        } else {
+          $(this).addClass('hide');
+        }
+      } else {
+        $(this).removeClass('hide');
+      }
+    });
   });
 
 })(jQuery);

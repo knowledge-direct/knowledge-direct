@@ -16,7 +16,7 @@ h1 {
 }
 
 header {
-  background-color: #6DAA30;
+  background-color: #888888;
   color: white;
   height: 40px;
 }
@@ -116,6 +116,13 @@ input[type=submit]:hover, button:hover {
 
 .unread, .read {
   width: 60px;
+}
+
+/* Paper Search Box style */
+
+input.paper-search {
+  font-size: 1rem;
+  margin-left: 2em;
 }
 
 /* Search Graph styles */

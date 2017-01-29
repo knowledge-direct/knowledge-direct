@@ -5,6 +5,7 @@ import os
 import json
 import sqlite3
 from db import database
+from service_algorithms import recommend_papers
 
 app = flask.Flask(__name__, static_url_path='/static')
 
@@ -42,18 +43,19 @@ def search():
             user_name = d.get_user_name(flask.session['user_id'])
         if user_name == '':
             user_name = None
-        target = None
-        start_papers = []
-        for item in flask.request.form.items():
-            if item[0] == 'target':
-                target = item[1]
-            else:
-                if item[1] == 'on':
-                    start_papers += [item[0]]
-        search_data = { 'target': target, 'start_papers': start_papers }
-        return flask.render_template('search.html', user_name=user_name, search_data=search_data)
+        return flask.render_template('search.html', user_name=user_name)
     else:
         return flask.redirect(flask.url_for('index'))
+
+
+@app.route('/search_json')
+def search_json():
+    if user_logged_in(flask.session):
+        list_of_papers = recommend_papers.get_shortest_path_recommendation(d, flask.session['user_id'], flask.request.args['paper'])
+        return flask.jsonify(list_of_papers)
+    else:
+        return flask.jsonify({})
+
 
 @app.route('/mark_read', methods=['POST'])
 def mark_read():

@@ -17,9 +17,10 @@ def get_shortest_path_recommendation(db, user, target_paper):
         cost = nx.shortest_path_length(G, source_paper, target_paper)
         if cost < current_cost:
             papers_in_path_id = get_shortest_path_papers(G, source_paper, target_paper, config.MAX_STEP_SIZE)
-            papers_in_path = db.list_papers_list(papers_in_path_id.reverse())
+            papers_in_path_id.reverse()
+            papers_in_path = db.list_papers_list(papers_in_path_id)
     return papers_in_path
-    
+
 def get_shortest_path_papers(G, source_paper, target_paper, max_step_size):
     whole_path = nx.shortest_path(G, source_paper, target_paper)
     papers_in_path=[]

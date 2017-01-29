@@ -82,6 +82,10 @@ class Database:
             args.append(page_size*page)
             args.append(page)
             limit = 'LIMIT ?, ?'
+        print(args)
+        print("""
+            SELECT * FROM papers {} {};
+            """.format(query, limit))
         self.curs.execute("""
             SELECT * FROM papers {} {};
             """.format(query, limit), args)
@@ -90,9 +94,10 @@ class Database:
 
     def list_papers_list(self, paper_list, page_size=None, page=0):
         ret = []
+        print(paper_list)
         for paper in paper_list:
-            ret += list_papers(self, query="""AS p WHERE p.id=?""",
-                                 args=[paper_list,], page_size=page_size, page=page)
+            ret += self.list_papers(query="""AS p WHERE p.id=?""",
+                                 args=[paper,], page_size=page_size, page=page)
         return ret
 
 
