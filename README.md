@@ -18,3 +18,9 @@ python3 back_end/server.py
 * knowescape.org
 * Neo4j
 * dependence tree (rather than relation network)
+
+## Screenshots
+
+![Homepage](screenshots/1.png)
+![Homepage with papers marked as read](screenshots/2.png)
+![Graph showing papers](screenshots/3.png)
