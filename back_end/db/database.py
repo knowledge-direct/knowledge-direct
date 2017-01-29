@@ -1,8 +1,8 @@
 import sys
-import requests
-import networkx as nx
 sys.path.append('../')
 
+import requests
+import networkx as nx
 import sqlite3
 
 import config

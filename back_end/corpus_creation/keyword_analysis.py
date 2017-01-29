@@ -1,6 +1,5 @@
-import networkx as nx
-import gzip
 import re
+import networkx as nx
 from collections import defaultdict
 
 # Note: compares everything, makes it into a full graph

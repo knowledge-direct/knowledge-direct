@@ -1,11 +1,17 @@
 import sys
 sys.path.append('../')
 
+import random
 import requests
 import json
 import bs4
-from db import database
 import sqlite3
+
+from db import database
+
+
+MAX_REFERENCES = 20
+MAX_CITATIONS = 20
 
 def get_paper_data(paper):
     r = requests.get('http://europepmc.org/abstract/{src}/{ext_id}'.format(src='MED',ext_id=paper))
@@ -32,19 +38,23 @@ def find_tag(metas, name):
     return out
 
 def get_citations(paper):
-    r = requests.get('http://www.ebi.ac.uk/europepmc/webservices/rest/{src}/{ext_id}/citations/{page}/{pageSize}/{format}'.format(src='MED', ext_id=paper, page=1, pageSize=200, format='JSON'))
+    r = requests.get('http://www.ebi.ac.uk/europepmc/webservices/rest/{src}/{ext_id}/citations/{page}/{pageSize}/{format}'.format(src='MED', ext_id=paper, page=1, pageSize=1000, format='JSON'))
     j = json.loads(r.text)
-    return [str(cit['id']) for cit in j['citationList']['citation']]
+    results = [str(cit['id']) for cit in j['citationList']['citation']]
+    random.shuffle(results)
+    return results[:min(MAX_CITATIONS, len(results))]
+    
 
 def get_references(paper):
-    r = requests.get('http://www.ebi.ac.uk/europepmc/webservices/rest/{src}/{ext_id}/references/{page}/{pageSize}/{format}'.format(src='MED', ext_id=paper, page=1, pageSize=200, format='JSON'))
+    r = requests.get('http://www.ebi.ac.uk/europepmc/webservices/rest/{src}/{ext_id}/references/{page}/{pageSize}/{format}'.format(src='MED', ext_id=paper, page=1, pageSize=1000, format='JSON'))
     j = json.loads(r.text)
-    out = []
+    results = []
     if 'referenceList' in j:
         for cite in j['referenceList']['reference']:
             if 'id' in cite:
-                out.append(cite['id'])
-    return out
+                results.append(cite['id'])
+    random.shuffle(results)
+    return results[:min(MAX_REFERENCES, len(results))]
 
 
 if __name__ == '__main__':
@@ -54,11 +64,12 @@ if __name__ == '__main__':
     checked_papers = []
     unchecked_papers = ['21296855']
 
-    paper_limit = 30
+    paper_limit = 1000
     count = 0
 
     while unchecked_papers and (count < paper_limit):
-        target_paper = unchecked_papers.pop()
+        #random.shuffle(unchecked_papers)
+        target_paper = unchecked_papers.pop(0)
         print('Processing {}'.format(target_paper))
 
 
@@ -68,7 +79,10 @@ if __name__ == '__main__':
 
         #add target paper to databse
         print(p)
-        db.add_paper(target_paper, p['title'], p['author'], p['date'], p['keywords'])
+        try:
+            db.add_paper(target_paper, p['title'], p['author'], p['date'], p['keywords'])
+        except sqlite3.IntegrityError:
+            print('*********** UNIQUE constraint failed: {} *************'.format(target_paper))
         for citation in citations:
             try:
                 db.add_connection(target_paper, citation)

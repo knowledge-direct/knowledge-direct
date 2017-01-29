@@ -1,10 +1,10 @@
 import sys
 sys.path.append("../")
 
-from db import database
 from collections import defaultdict
 import networkx as nx
-import gzip
+
+from db import database
 
 
 def add_first(G):

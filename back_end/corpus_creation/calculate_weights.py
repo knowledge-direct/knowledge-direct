@@ -1,13 +1,11 @@
 import sys
 sys.path.append("../")
 
-
-from db import database
 import networkx as nx
-import gzip
 
-import network_analysis
 import config
+from db import database
+import network_analysis
 
 
 def calculate_weight(G):
