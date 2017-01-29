@@ -11,8 +11,7 @@ Our service provides a means of bridging between the subspace of knowledge which
 
 Publication subspace coverage is approximated as nodes and the hyperspace is projected onto a network with distances between nodes as approximations to the distances within the hyperspace.
 
-These distance estimates are an aggregations of several factors including whether the papers are citation/reference connected (first degree connection), how many shared cited/referencing papers they have (second degree connections) and overlap of keywords.
-More could include text analysis of abstract/full text analysis; author input; experint input; user input or others.
+These distance estimates are an aggregations of several factors including whether the papers are citation/reference connected (first degree connection), how many shared cited/referencing papers they have (second degree connections) and overlap of keywords. The weight of a keyword with which it contributes to the overlap score is scaled inversely proportional with its frequency among all keywords, to upscale highly specialised ones and downscale general, commonly appearing words. Addiotnal statistics could include text analysis of abstract/full text analysis; author input; experint input; user input or others.
 
 A shortest path is found on a network of unity weight edges for distances below a threshold and weights penalised above unity for distances above the threshold. This threshold is to model the users ability to move outside his field of knowledge and the weight of unity for comprehensible papers aims to minimize to number of new papers to read. So papers they find comfortable learning are included but papers that they would find challeneging are penalised.
 
