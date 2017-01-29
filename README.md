@@ -14,7 +14,9 @@ Publication subspace coverage is approximated as nodes and the hyperspace is pro
 These distance estimates are an aggregations of several factors including whether the papers are citation/reference connected (first degree connection), how many shared cited/referencing papers they have (second degree connections) and overlap of keywords.
 More could include text analysis of abstract/full text analysis; author input; experint input; user input or others.
 
-A shortest path is found on a network of unity weight edges for distances below a threshold and weights penalised above unity for distances above the threshold. This threshold is to model the users ability to move outside his field of knowledge. So papers they find comfortable learning are included but papers that they would find challeneging are penalised.
+A shortest path is found on a network of unity weight edges for distances below a threshold and weights penalised above unity for distances above the threshold. This threshold is to model the users ability to move outside his field of knowledge and the weight of unity for comprehensible papers aims to minimize to number of new papers to read. So papers they find comfortable learning are included but papers that they would find challeneging are penalised.
+
+Users can choose to explore a single paper or a set of papers. In the former case, papers in the shortest path are suggested. In the latter, the minimal number of papers are suggested such that the resulting graph consisting of the known papers, suggested papers and desired papers to explore is connected.
 
 ## Getting Started
 
