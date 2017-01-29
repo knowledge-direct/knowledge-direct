@@ -30,22 +30,30 @@ def index():
     if user_logged_in(flask.session):
         unread_papers = d.list_papers_unread(flask.session['user_id'])
         read_papers = d.list_papers_read(flask.session['user_id'])
-        return flask.render_template('logged_in.html', user_name=user_name, unread_papers=unread_papers, read_papers=read_papers)
+        return flask.render_template('papers.html', user_name=user_name, unread_papers=unread_papers, read_papers=read_papers)
     else:
         return flask.render_template('main.html', user_name=user_name)
 
 @app.route('/search', methods=['GET'])
 def search():
-    target = None
-    start_papers = []
-    for item in flask.request.form.items():
-        if item[0] == 'target':
-            target = item[1]
-        else:
-            if item[1] == 'on':
-                start_papers += [item[0]]
-    search_data = { 'target': target, 'start_papers': start_papers }
-    return flask.jsonify(search_data)
+    if user_logged_in(flask.session):
+        user_name = None
+        if 'user_id' in flask.session:
+            user_name = d.get_user_name(flask.session['user_id'])
+        if user_name == '':
+            user_name = None
+        target = None
+        start_papers = []
+        for item in flask.request.form.items():
+            if item[0] == 'target':
+                target = item[1]
+            else:
+                if item[1] == 'on':
+                    start_papers += [item[0]]
+        search_data = { 'target': target, 'start_papers': start_papers }
+        return flask.render_template('search.html', user_name=user_name, search_data=search_data)
+    else:
+        return flask.redirect(flask.url_for('index'))
 
 @app.route('/mark_read', methods=['POST'])
 def mark_read():

@@ -2,6 +2,7 @@ import sys
 sys.path.append("../")
 
 from db import database
+from collections import defaultdict
 import networkx as nx
 import gzip
 
@@ -31,6 +32,13 @@ def add_second(G):
                     H[node1][node3]['num_second_deg'] += 1
     return H
 
+
+def add_weights(G, coeffs):
+    for (u, v, d) in G.edges(data=True):
+        d_default = defaultdict(int, d)
+        #d['weight'] = coeffs[0]*d_default['first_deg'] + coeffs[1]*d_default['n_second_deg'] + coeffs[2]*d_default['keyword_overlap']
+        d['weight'] = 1/(d_default['first_deg'] + 0.1*d_default['n_second_deg'] + d_default['keyword_overlap'])
+    return G
 
 if __name__ == '__main__':
 
