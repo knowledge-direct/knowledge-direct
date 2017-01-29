@@ -7,20 +7,14 @@
   <h3>Select multiple target papers</h3>
     <p class="desc">Select many papers from the list for targets, then press "Find path" to search, or press "Back" to go back to the homepage</p>
   <input type="text" placeholder="Filter list by title or author" class="paper-search"/>
-  <ul class="paper-list">
+  <ul class="paper-list paper-list-multiple">
     {% for paper in unread_papers %}
       <li>
         <label>
           <table>
             <tr>
               <td data-paper-id="{{ paper['paper_id'] }}" class="unread">
-                <input type="checkbox" name="{{ paper['paper_id'] }}">
-                <span class="find-shortest-path">
-                  <a href="/search?paper={{ paper['paper_id'] }}">
-                    <img src="/static/img/path.svg" class="path"/>
-                  </a>
-                </span>
-
+                <input type="checkbox" name="{{ paper['paper_id'] }}" class="search">
               </td>
               <td>
                 <b>{{ paper['title'] }}</b>

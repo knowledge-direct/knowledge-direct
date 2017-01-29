@@ -156,6 +156,29 @@ input.paper-search {
   width: 50%
 }
 
+input[type=checkbox].search {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  background-image: url('/static/img/search.svg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+input[type=checkbox].search:checked {
+  background-image: url('/static/img/search_checked.svg');
+}
+
+.paper-list-multiple label {
+  cursor: pointer;
+}
+
+.paper-list-multiple label:hover * {
+  background-color: #dddddd;
+}
+
 /* Search Graph styles */
 
 .search-graph {
