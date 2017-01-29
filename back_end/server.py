@@ -75,9 +75,10 @@ def search_json():
             for (k, v) in flask.request.args.items():
                 if v == 'on':
                     paper_id_list += [k]
-            return flask.jsonify(paper_id_list)
-
-            # list_of_papers = recommend_papers.get_shortest_path_recommendation(d, flask.session['user_id'], flask.request.args['paper'])
+            print(paper_id_list)
+            list_of_papers = recommend_papers.get_shortest_path_recommendation_set(d, flask.session['user_id'], paper_id_list)
+            print(list_of_papers)
+            return flask.jsonify(list_of_papers=list_of_papers)
     else:
         return flask.jsonify({})
 
