@@ -21,7 +21,7 @@ def get_shortest_path_recommendation(db, user, target_paper):
     for paper in papers_in_path_id:
         additional_nodes.remove(paper)
 
-    return (papers_in_path, G.edges(), additional_nodes)
+    return (papers_in_path, G.edges(), list(additional_nodes))
 
 def get_shortest_path_recommendation_set(db, user, target_papers):
     G = db.get_citation_network()
@@ -86,8 +86,8 @@ def get_shortest_path_recommendation_set(db, user, target_papers):
     additional_nodes = set(G.nodes())
     for paper in papers_in_path_id:
         additional_nodes.remove(paper)
-        
-    return (papers_in_path, G.edges(), additional_nodes)
+
+    return (papers_in_path, G.edges(), list(additional_nodes))
 
 def add_paper_to_path(papers_in_path_id, path_to_add, source_papers):
     for node in path_to_add:
