@@ -1,10 +1,16 @@
 ## install these using pip3 install -r requirements.txt
+## Server
 flask
 httplib2
 oauth2client
 google-api-python-client
-requests
+##Algorithms
 networkx
+
+##Db
+sqlite3
+requests
 ## BeuatifulSoup4
 bs4
 json
+
