@@ -35,7 +35,7 @@ def add_second(G):
 
 def add_weights(G, coeffs):
     for (u, v, d) in G.edges(data=True):
-        d_default = defaultdict(int, d)
+        d_default = defaultdict(int, d) # Initialization at zero if key not in dict
         #d['weight'] = coeffs[0]*d_default['first_deg'] + coeffs[1]*d_default['n_second_deg'] + coeffs[2]*d_default['keyword_overlap']
         d['weight'] = 1/(d_default['first_deg'] + 0.1*d_default['num_second_deg'] + d_default['keyword_overlap'])
     return G

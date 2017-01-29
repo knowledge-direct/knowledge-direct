@@ -35,9 +35,13 @@ def get_shortest_path_papers(G, source_paper, target_paper, max_step_size):
         differences.append(this_weight)
         cum_weights += this_weight
         if cum_weights > max_step_size:
-            print(cum_weights - this_weight, node1)
-            cum_weights = this_weight
-            papers_in_path.append(node1)
+            if cum_weights > this_weight:
+                cum_weights = this_weight
+                papers_in_path.append(node1)
+            else: # Single step, larger than step size
+                cum_weights = 0
+                papers_in_path.append(node2)
 
-    papers_in_path.append(target_paper)
+    if not target_paper in papers_in_path:
+        papers_in_path.append(target_paper)
     return(papers_in_path)
