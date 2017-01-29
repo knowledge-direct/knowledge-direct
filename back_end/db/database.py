@@ -78,8 +78,6 @@ class Database:
 
     def list_papers(self, query='', args=[], page_size=None, page=0):
         limit = ''
-        if user is not None:
-            args.append(user)
         if page_size is not None:
             args.append(page_size*page)
             args.append(page)
@@ -98,31 +96,16 @@ class Database:
         return ret
 
 
-    def list_papers_read(self, user, page_size=None, page=0):
-<<<<<<< HEAD
-        if page_size is None:
-            self.curs.execute("""
-                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0;
-                """, (user,))
-        else:
-            self.curs.execute("""
-                SELECT * FROM familiarities AS f JOIN papers AS p on f.paper=p.id WHERE f.user=? AND f.value > 0 LIMIT ?, ?;
-                """, (user, page_size*page, page_size))
 
-        results = self.curs.fetchall()
-        return [{'paper_id': res[3], 'title': res[4], 'author': res[5], 'date': res[6], 'key_words': res[7]} for res in results]
+
+    def list_papers_read(self, user, page_size=None, page=0):
+        return self.list_papers(query="""AS p WHERE p.id IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
+                             args=[user,], page_size=page_size, page=page)
 
     def list_papers_unread(self, user, page_size=None, page=0):
-        if page_size is None:
-            self.curs.execute("""
-                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0);
-                """, (user,))
-        else:
-            self.curs.execute("""
-                SELECT * FROM papers as p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0) LIMIT ?, ?;
-                """, (user, page_size*page, page_size))
-        results = self.curs.fetchall()
-        return [{'paper_id': res[0], 'title': res[1], 'author': res[2], 'date': res[3], 'key_words': res[4]} for res in results]
+        return self.list_papers(query="""AS p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
+                             args=[user,], page_size=page_size, page=page)
+
 
     # Method for checking if a user exists, if not then creating a new record
     # followed by returning the user's ID
@@ -156,15 +139,7 @@ class Database:
             return ''
         else:
             return row[0]
-=======
-        return list_papers(self, query="""AS p WHERE p.id IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
-                             args=[user,], page_size=page_size, page=page)
-
-    def list_papers_unread(self, user, page_size=None, page=0):
-        return list_papers(self, query="""AS p WHERE p.id NOT IN (SELECT paper FROM familiarities WHERE user=? AND value > 0)""",
-                             args=[user,], page_size=page_size, page=page)
 
 
 if __name__ == '__main__':
     db = Database()
->>>>>>> origin/master
