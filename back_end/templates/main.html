@@ -6,7 +6,7 @@
   </head>
   <body>
     <header>
-      <div class="header-left"><a href="/"><h1>Knowledge Direct</h1></a></div>
+      <div class="header-left"><a href="/"><h1>Knowledge Direct</h1></a> {% block header %}{% endblock %}</div>
       <div class="header-right">
         {% if user_name == None %}
         {% else %}

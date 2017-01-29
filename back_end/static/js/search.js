@@ -2,7 +2,7 @@
 
   $(document).ready(function() {
 
-    $.getJSON('/search_json?paper=' + (window.location.href.substr(window.location.href.indexOf('=') + 1))
+    $.getJSON('/search_json?' + (window.location.href.substr(window.location.href.indexOf('?') + 1))
 , function(data) {
       // Let's first initialize sigma:
       var s = new sigma('search-graph');
