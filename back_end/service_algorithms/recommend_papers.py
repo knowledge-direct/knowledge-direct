@@ -16,7 +16,7 @@ def get_shortest_path_recommendation(db, user, target_paper):
     papers_in_path_id = nx.shortest_path(G, closest_source, target_paper)
     papers_in_path_id.reverse()
     papers_in_path = db.list_papers_list(papers_in_path_id)
-    return (papers_in_path, G.edges())
+    return (papers_in_path, G.edges(), G.nodes())
 
 def get_shortest_path_recommendation_set(db, user, target_papers):
     G = db.get_citation_network()
@@ -79,7 +79,7 @@ def get_shortest_path_recommendation_set(db, user, target_papers):
     papers_in_path_id.reverse()
     papers_in_path = db.list_papers_list(papers_in_path_id)
 
-    return (papers_in_path, G.edges())
+    return (papers_in_path, G.edges(), G.nodes())
 
 def add_paper_to_path(papers_in_path_id, path_to_add, source_papers):
     for node in path_to_add:
