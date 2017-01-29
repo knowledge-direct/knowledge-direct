@@ -33,8 +33,8 @@ class Database:
 
     def add_connection(self, citing, cited):
         self.curs.execute("""
-            INSERT INTO connections(paper_one, paper_two, citing)
-            VALUES (?, ?, ?);
+            INSERT INTO connections(paper_one, paper_two, citing, weight)
+            VALUES (?, ?, ?, 0);
         """, (citing, cited, True))
         self.conn.commit()
 
@@ -63,16 +63,16 @@ class Database:
             SELECT id, title, author, date, key_words FROM papers;
             """)
         results = self.curs.fetchall()
-        for id, title, author, date, key_words in results:
-            citation_graph.add_node(id, title=title, author=author, date=date, key_words=key_words)
+        for identifier, title, author, date, key_words in results:
+            citation_graph.add_node(identifier, title=title, author=author, date=date, key_words=key_words)
 
         self.curs.execute("""
-            SELECT paper_one, paper_two FROM connections WHERE citing=1;
+            SELECT paper_one, paper_two, weight FROM connections WHERE citing=1;
             """)
         results = self.curs.fetchall()
-        for p1, p2 in results:
+        for p1, p2, weight in results:
             if citation_graph.has_node(p1) and citation_graph.has_node(p2):
-                citation_graph.add_edge(p1, p2)
+                citation_graph.add_edge(p1, p2, weight=weight)
         return citation_graph
 
 
