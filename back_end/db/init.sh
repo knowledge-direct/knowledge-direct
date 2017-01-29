@@ -37,7 +37,7 @@ sqlite3 $DB '
     first_deg BOOL,
     num_second_deg INT,
     key_word_score INT,
-    quality,
+    weight INT NOT NULL,
     PRIMARY KEY (paper_one, paper_two)
     )' || true
 sqlite3 $DB '

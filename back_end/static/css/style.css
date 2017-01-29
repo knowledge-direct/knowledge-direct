@@ -27,7 +27,7 @@ header h1 {
 }
 
 header * {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 header > * {
@@ -49,8 +49,8 @@ header a:hover h1 {
 }
 
 .header-right {
-  right: 5px;
-  top: 10px;
+  right: 10px;
+  top: 13px;
 }
 
 /* Content styles */
@@ -116,4 +116,14 @@ input[type=submit]:hover, button:hover {
 
 .unread, .read {
   width: 60px;
+}
+
+/* Search Graph styles */
+
+.search-graph {
+  position: absolute;
+  top: 80px;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
 }
