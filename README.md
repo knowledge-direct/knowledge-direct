@@ -19,7 +19,7 @@ Run the server:
 python3 back_end/server.py
 ```
 
-## Suggested Things
+## Suggested Things and Future Ideas
 * knowescape.org
 * Neo4j
 * dependence tree (rather than relation network)
