@@ -33,11 +33,11 @@ sqlite3 $DB '
     CREATE TABLE connections(
     paper_one TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     paper_two TEXT NOT NULL REFERENCES papers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    citing BOOL NOT NULL,
-    first_deg BOOL,
-    num_second_deg INT,
-    key_word_score INT,
-    weight INT NOT NULL,
+    citing BOOL DEFAULT 0 NOT NULL,
+    first_deg BOOL DEFAULT 0,
+    num_second_deg INT DEFAULT 0,
+    key_word_score INT DEFAULT 0,
+    weight INT DEFAULT 1 NOT NULL,
     PRIMARY KEY (paper_one, paper_two)
     )' || true
 sqlite3 $DB '

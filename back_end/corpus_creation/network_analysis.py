@@ -7,12 +7,6 @@ import networkx as nx
 import gzip
 
 
-def calculate_overlap(G, source_paper, target_paper):
-    source_edges = set(G[source_paper].keys())
-    target_edges = set(G[target_paper].keys())
-    overlap_edges = source_edges.intersection(target_edges)  # Number of path of at most 2 - 1
-    return len(overlap_edges)
-
 def add_first(G):
     for node1 in G.nodes():
         for node2 in G.neighbors(node1):
@@ -33,12 +27,6 @@ def add_second(G):
     return H
 
 
-def add_weights(G, coeffs):
-    for (u, v, d) in G.edges(data=True):
-        d_default = defaultdict(int, d)
-        #d['weight'] = coeffs[0]*d_default['first_deg'] + coeffs[1]*d_default['n_second_deg'] + coeffs[2]*d_default['keyword_overlap']
-        d['weight'] = 1/(d_default['first_deg'] + 0.1*d_default['num_second_deg'] + d_default['keyword_overlap'])
-    return G
 
 if __name__ == '__main__':
 
