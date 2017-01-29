@@ -30,7 +30,7 @@ def index():
     if user_logged_in(flask.session):
         unread_papers = d.list_papers_unread(flask.session['user_id'])
         read_papers = d.list_papers_read(flask.session['user_id'])
-        return flask.render_template('logged_in.html', user_name=user_name, unread_papers=unread_papers, read_papers=read_papers)
+        return flask.render_template('papers.html', user_name=user_name, unread_papers=unread_papers, read_papers=read_papers)
     else:
         return flask.render_template('main.html', user_name=user_name)
 

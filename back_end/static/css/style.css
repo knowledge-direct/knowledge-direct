@@ -39,6 +39,10 @@ header a {
   color: white;
 }
 
+header a:hover h1 {
+  text-decoration: underline;
+}
+
 .header-left {
   top: 8px;
   left: 10px;
